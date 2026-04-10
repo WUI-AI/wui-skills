@@ -27,6 +27,21 @@ Use this skill to run WUI.AI's agent video workflow:
 
 Prefer the bundled script instead of hand-writing API calls.
 
+## User-facing progress updates
+
+The agent must keep the user informed while the workflow is running. Do not leave the user staring at a silent polling loop.
+
+Report progress at these points:
+
+1. After creating the generate task: say the video generation task has started and include `thread_id`.
+2. During progress polling: every poll or every few polls, summarize the current generation status in plain language, for example `生成中，约 40%，还不能导出`.
+3. When `can_export=true`: say the video is ready to export.
+4. After creating the export task: say the export task has started and include `task_id`.
+5. During export polling: every poll or every few polls, summarize the export status in plain language, for example `导出中，约 70%`.
+6. When delivered: provide the final MP4 URL.
+
+The bundled script prints `[WUI Agent Video] ...` progress lines for these stages. If running the script from an agent, read those lines and relay the important updates to the user.
+
 ## Auth
 
 Set the API token in one of these ways:
