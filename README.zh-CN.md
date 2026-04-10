@@ -18,20 +18,6 @@ wui-agent-video
 npx skills add https://github.com/WUI-AI/wui-skills -g --skill wui-agent-video
 ```
 
-参数含义：
-
-- `https://github.com/WUI-AI/wui-skills` 是技能仓库地址。
-- `--skill wui-agent-video` 表示从这个仓库里选择名为 `wui-agent-video` 的 skill 安装。它不是给 skill 改名。
-- `-g` 表示安装到用户全局 skills 目录，让这个 skill 在多个项目里都可用。
-
-如果安装器询问安装方式，优先选择 **Symlink**。Symlink 会让各个 Agent 指向同一份 skill，后续更新更方便。只有在环境不支持软链接时才选择 Copy。
-
-非交互安装可以使用：
-
-```bash
-npx skills add https://github.com/WUI-AI/wui-skills -g --skill wui-agent-video -y
-```
-
 ## 使用
 
 安装后，直接让 Agent 使用 skill 名称：
