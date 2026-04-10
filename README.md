@@ -28,6 +28,14 @@ Install the video skill globally:
 npx skills add https://github.com/WUI-AI/wui-skills -g --skill wui-agent-video
 ```
 
+## Update
+
+When this repository changes, update the installed skill with the same command:
+
+```bash
+npx skills add https://github.com/WUI-AI/wui-skills -g --skill wui-agent-video
+```
+
 ## Use
 
 After installation, invoke the skill by name:

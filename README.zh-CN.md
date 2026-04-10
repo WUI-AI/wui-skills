@@ -18,6 +18,14 @@ wui-agent-video
 npx skills add https://github.com/WUI-AI/wui-skills -g --skill wui-agent-video
 ```
 
+## 更新
+
+当这个仓库有更新时，用同一条命令更新已安装的 skill：
+
+```bash
+npx skills add https://github.com/WUI-AI/wui-skills -g --skill wui-agent-video
+```
+
 ## 使用
 
 安装后，直接让 Agent 使用 skill 名称：
