@@ -53,7 +53,7 @@ video.generate
 Default API base:
 
 ```text
-https://llm-server.wui.ai/api/agent/v1/video
+https://llm-server-prod.wui.ai/api/agent/v1/video
 ```
 
 Endpoints:

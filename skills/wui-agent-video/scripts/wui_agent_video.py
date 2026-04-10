@@ -14,7 +14,7 @@ from pathlib import Path
 from typing import Any
 
 
-DEFAULT_BASE_URL = "https://llm-server.wui.ai/api/agent/v1/video"
+DEFAULT_BASE_URL = "https://llm-server-prod.wui.ai/api/agent/v1/video"
 GENERATE_TERMINAL_STATUSES = {"ready_for_export", "failed"}
 EXPORT_TERMINAL_STATUSES = {"delivered", "failed"}
 
