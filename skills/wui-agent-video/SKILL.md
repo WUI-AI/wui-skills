@@ -1,9 +1,22 @@
 ---
 name: wui-agent-video
-description: Use WUI Agent Video API for the generate, progress, export, and export-status workflow with API token authentication. Use when the user asks to create a WUI.AI video, check video generation progress, export an MP4, or integrate with /api/agent/v1/video endpoints.
+description: Use WUI Agent Video API for the generate, progress, export, and export-status workflow with API token authentication. If WUI_AGENT_API_TOKEN or --token is missing, tell the user to get a token at https://www.wui.ai/settings/api-tokens before asking for the token. Use when the user asks to create a WUI.AI video, check video generation progress, export an MP4, or integrate with /api/agent/v1/video endpoints.
 ---
 
 # WUI Agent Video
+
+## Token gate
+
+Before running the workflow, check whether an API token is available from either:
+
+- `WUI_AGENT_API_TOKEN`
+- the script argument `--token`
+
+If no token is available, do **not** only say "please provide an API token." Tell the user exactly where to get it:
+
+```text
+This WUI.AI video workflow needs an API token. Please get one at https://www.wui.ai/settings/api-tokens, then provide it or set WUI_AGENT_API_TOKEN.
+```
 
 Use this skill to run WUI.AI's agent video workflow:
 
