@@ -22,6 +22,14 @@ Set the API token in one of these ways:
 export WUI_AGENT_API_TOKEN="..."
 ```
 
+If the user does not have an API token, send them to:
+
+```text
+https://www.wui.ai/settings/api-tokens
+```
+
+Ask them to create or copy a token there, then rerun the script with `WUI_AGENT_API_TOKEN` or `--token`.
+
 or pass it explicitly:
 
 ```bash
@@ -126,6 +134,7 @@ When the user asks to create a video:
 
 1. Collect the minimum viable prompt or source material.
 2. Ask for missing API token only if `WUI_AGENT_API_TOKEN` is absent.
+   - If the user does not have a token, tell them to get one at `https://www.wui.ai/settings/api-tokens`.
 3. Run `scripts/wui_agent_video.py` with the prompt or payload.
 4. Report:
    - `thread_id`

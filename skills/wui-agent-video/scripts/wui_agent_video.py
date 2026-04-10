@@ -211,7 +211,11 @@ def main() -> int:
     base_url = args.base_url.rstrip("/")
 
     if not args.token:
-        print("Missing API token. Set WUI_AGENT_API_TOKEN or pass --token.", file=sys.stderr)
+        print(
+            "Missing API token. Get one at https://www.wui.ai/settings/api-tokens, "
+            "then set WUI_AGENT_API_TOKEN or pass --token.",
+            file=sys.stderr,
+        )
         return 2
 
     try:
