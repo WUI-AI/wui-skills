@@ -1,90 +1,47 @@
 ---
 name: wui-agent-video
-description: Use WUI Agent Video API for the generate, progress, export, and export-status workflow with API token authentication. If WUI_AGENT_API_TOKEN or --token is missing, tell the user to get a token at https://www.wui.ai/settings/api-tokens before asking for the token. Use when the user asks to create a WUI.AI video, check video generation progress, export an MP4, or integrate with /api/agent/v1/video endpoints.
+description: Run WUI Agent Video API end-to-end with a bundled script. Use when the user asks to generate a WUI.AI video, check progress, export MP4, or resume from thread_id/task_id. The script handles API chaining and polling for /generate, /progress, /export, and /export/status.
 ---
 
 # WUI Agent Video
 
-## Token gate
+Use this skill when the task is about WUI video generation or export.
 
-Before running the workflow, check whether an API token is available from either:
+## Quick Start
 
-- `WUI_AGENT_API_TOKEN`
-- the script argument `--token`
+1) Set API token:
 
-If no token is available, do **not** only say "please provide an API token." Tell the user exactly where to get it:
+```bash
+export WUI_AGENT_API_TOKEN="your-token"
+```
+
+2) Run full flow (generate -> poll progress -> export -> poll export):
+
+```bash
+python scripts/wui_agent_video.py --prompt "Make a 30-second video about ..."
+```
+
+3) Return final URL when delivered.
+
+## Token Rule
+
+The script needs `WUI_AGENT_API_TOKEN` or `--token`.
+
+If missing, tell user where to get one:
 
 ```text
 This WUI.AI video workflow needs an API token. Please get one at https://www.wui.ai/settings/api-tokens, then provide it or set WUI_AGENT_API_TOKEN.
 ```
 
-Use this skill to run WUI.AI's agent video workflow:
-
-1. Generate a video thread.
-2. Poll progress until the thread can export.
-3. Start MP4 export.
-4. Poll export status until the video is delivered.
-
-Prefer the bundled script instead of hand-writing API calls.
-
-## User-facing progress updates
-
-The agent must keep the user informed while the workflow is running. Do not leave the user staring at a silent polling loop.
-
-Report progress at these points:
-
-1. After creating the generate task: say the video generation task has started and include `thread_id`.
-2. During progress polling: every poll or every few polls, summarize the current generation status in plain language, for example `生成中，约 40%，还不能导出`.
-3. When `can_export=true`: say the video is ready to export.
-4. After creating the export task: say the export task has started and include `task_id`.
-5. During export polling: every poll or every few polls, summarize the export status in plain language, for example `导出中，约 70%`.
-6. When delivered: provide the final MP4 URL.
-
-The bundled script prints `[WUI Agent Video] ...` progress lines for these stages. If running the script from an agent, read those lines and relay the important updates to the user.
-
-## Auth
-
-Set the API token in one of these ways:
-
-```bash
-export WUI_AGENT_API_TOKEN="..."
-```
-
-If the user does not have an API token, send them to:
-
-```text
-https://www.wui.ai/settings/api-tokens
-```
-
-Ask them to create or copy a token there, then rerun the script with `WUI_AGENT_API_TOKEN` or `--token`.
-
-or pass it explicitly:
+Or run with explicit token:
 
 ```bash
 python scripts/wui_agent_video.py --token "..." --prompt "..."
 ```
 
-The API uses:
-
-```text
-Authorization: <api_token>
-```
-
-Required scope:
-
-```text
-video.generate
-```
-
 ## Endpoints
 
-Default API base:
-
-```text
-https://llm-server-prod.wui.ai/api/agent/v1/video
-```
-
-Endpoints:
+Default base URL:
 
 - `GET /skill`
 - `POST /generate`
@@ -92,83 +49,91 @@ Endpoints:
 - `POST /export`
 - `GET /export/status/{task_id}`
 
-Override the base URL with:
+Use custom base URL:
 
 ```bash
-export WUI_AGENT_VIDEO_BASE_URL="https://.../api/agent/v1/video"
-```
-
-or:
-
-```bash
-python scripts/wui_agent_video.py --base-url "https://.../api/agent/v1/video" --prompt "..."
+export WUI_AGENT_VIDEO_BASE_URL="https://llm-server-prod.wui.ai/api/agent/v1/video"
 ```
 
 ## Script usage
 
-Run the full workflow:
+### Full workflow
 
 ```bash
 python scripts/wui_agent_video.py --prompt "Make a 30-second YouTube Shorts video about why people abandon side projects."
 ```
 
-With an input JSON payload:
+### Use JSON payload
 
 ```bash
 python scripts/wui_agent_video.py --input payload.json
 ```
 
-Only generate and stop before export:
+### Generate and stop before export
 
 ```bash
 python scripts/wui_agent_video.py --prompt "..." --no-export
 ```
 
-Resume export from an existing thread:
+### Resume from existing thread
 
 ```bash
 python scripts/wui_agent_video.py --thread-id "<thread_id>"
 ```
 
-Check progress only:
+### Progress only
 
 ```bash
 python scripts/wui_agent_video.py --thread-id "<thread_id>" --progress-only
 ```
 
-Check export status only:
+### Export status only
 
 ```bash
 python scripts/wui_agent_video.py --task-id "<task_id>" --export-status-only
 ```
 
-## Expected statuses
+### Polling controls
 
-Generate/progress statuses:
+```bash
+python scripts/wui_agent_video.py --prompt "..." --poll-interval 5 --max-progress-attempts 120 --max-export-attempts 120
+```
+
+## Status Guide
+
+Generate/progress:
 
 ```text
 queued | generating | ready_for_export | failed
 ```
 
-Export statuses:
+Export:
 
 ```text
 exporting | delivered | failed
 ```
 
+Stop conditions:
+- Progress polling stops when `can_export=true` or status is terminal.
+- Export polling stops when status is `delivered` or `failed`.
+
 ## Agent workflow
 
-When the user asks to create a video:
+When user asks for a video:
 
-1. Collect the minimum viable prompt or source material.
-2. Ask for missing API token only if `WUI_AGENT_API_TOKEN` is absent.
-   - If the user does not have a token, tell them to get one at `https://www.wui.ai/settings/api-tokens`.
-3. Run `scripts/wui_agent_video.py` with the prompt or payload.
-4. Report:
-   - `thread_id`
-   - generation status
-   - `task_id`
-   - export status
-   - delivered MP4 URL, if available
+1. Gather prompt (or payload file).
+2. Ensure token exists.
+3. Run `python scripts/wui_agent_video.py ...`.
+4. Relay progress logs to user.
+5. Return final MP4 URL.
 
-Do not claim the video is exported until export status is `delivered` and the response includes a usable `data.url`.
+Do not claim success until export status is `delivered` and URL is present.
+
+## Progress update format
+
+Use concise updates during long polling:
+- `Generate task started, thread_id=...`
+- `Generating, about 40%, not exportable yet`
+- `Export task started, task_id=...`
+- `Exporting, about 70%`
+- `Done, download URL: ...`

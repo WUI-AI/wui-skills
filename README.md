@@ -22,18 +22,18 @@ Use it when the user asks an agent to create, plan, script, storyboard, edit, ex
 
 ## Install
 
-Install the video skill globally:
+Install the video skill to Cursor:
 
 ```bash
-npx skills add https://github.com/WUI-AI/wui-skills -g --skill wui-agent-video
+npx @wui-ai/wui-skills install wui-agent-video
 ```
 
 ## Update
 
-When this repository changes, update the installed skill with the same command:
+Run the same install command again to overwrite the local copy:
 
 ```bash
-npx skills add https://github.com/WUI-AI/wui-skills -g --skill wui-agent-video
+npx @wui-ai/wui-skills install wui-agent-video
 ```
 
 ## Use
@@ -48,7 +48,7 @@ Use wui-agent-video to turn this idea into a 30-second YouTube Shorts script and
 Use wui-agent-video to generate a WUI.AI video and export the MP4.
 ```
 
-The skill includes a script for the WUI Agent Video API workflow:
+The skill includes a script that runs the full WUI Agent Video API workflow:
 
 ```bash
 python scripts/wui_agent_video.py --prompt "Make a 30-second video about ..."

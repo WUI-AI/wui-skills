@@ -19,16 +19,16 @@ GENERATE_TERMINAL_STATUSES = {"ready_for_export", "failed"}
 EXPORT_TERMINAL_STATUSES = {"delivered", "failed"}
 
 GENERATE_STATUS_LABELS = {
-    "queued": "排队中",
-    "generating": "生成中",
-    "ready_for_export": "可导出",
-    "failed": "生成失败",
+    "queued": "queued",
+    "generating": "generating",
+    "ready_for_export": "ready for export",
+    "failed": "generation failed",
 }
 
 EXPORT_STATUS_LABELS = {
-    "exporting": "导出中",
-    "delivered": "已完成",
-    "failed": "导出失败",
+    "exporting": "exporting",
+    "delivered": "delivered",
+    "failed": "export failed",
 }
 
 
@@ -186,7 +186,7 @@ def extract_progress_value(response: dict[str, Any]) -> int | float | None:
 
 def format_progress(value: int | float | None) -> str:
     if value is None:
-        return "进度未知"
+        return "unknown progress"
     if 0 <= value <= 1:
         value = value * 100
     return f"{round(value)}%"
@@ -194,7 +194,7 @@ def format_progress(value: int | float | None) -> str:
 
 def format_status(status: str | None, labels: dict[str, str]) -> str:
     if not status:
-        return "状态未知"
+        return "unknown status"
     label = labels.get(status)
     return f"{label} ({status})" if label else status
 
@@ -213,9 +213,9 @@ def poll_progress(base_url: str, token: str, thread_id: str, interval: int, max_
         progress = extract_progress_value(last)
         print(
             "[WUI Agent Video] "
-            f"第 {attempt} 次检查：视频生成{format_status(status, GENERATE_STATUS_LABELS)}，"
-            f"{format_progress(progress)}，"
-            f"{'已经可以导出' if can_export else '还不能导出'}。"
+            f"Progress check {attempt}: generation is {format_status(status, GENERATE_STATUS_LABELS)}, "
+            f"{format_progress(progress)}, "
+            f"{'export is available' if can_export else 'not exportable yet'}."
         )
         sys.stdout.flush()
         if can_export or status in GENERATE_TERMINAL_STATUSES:
@@ -233,9 +233,9 @@ def poll_export(base_url: str, token: str, task_id: str, interval: int, max_atte
         progress = extract_progress_value(last)
         print(
             "[WUI Agent Video] "
-            f"第 {attempt} 次检查：视频导出{format_status(status, EXPORT_STATUS_LABELS)}，"
+            f"Export check {attempt}: export is {format_status(status, EXPORT_STATUS_LABELS)}, "
             f"{format_progress(progress)}"
-            f"{'，已获得下载链接。' if url else '。'}"
+            f"{', download URL is available.' if url else '.'}"
         )
         sys.stdout.flush()
         if status in EXPORT_TERMINAL_STATUSES:
@@ -291,17 +291,17 @@ def main() -> int:
       thread_id = args.thread_id
       if not thread_id:
           payload = load_payload(args)
-          print("[WUI Agent Video] 第 1 步：已收到视频需求，正在创建视频生成任务。")
+          print("[WUI Agent Video] Step 1: creating generation task.")
           sys.stdout.flush()
           generated = request_json("POST", f"{base_url}/generate", args.token, payload)
           print_json("generate", generated)
           thread_id = extract_thread_id(generated)
           if not thread_id:
               raise ApiError("Could not find thread_id in /generate response")
-          print(f"[WUI Agent Video] 生成任务已创建，thread_id={thread_id}。")
+          print(f"[WUI Agent Video] Generation task created, thread_id={thread_id}.")
           sys.stdout.flush()
 
-      print("[WUI Agent Video] 第 2 步：开始轮询生成进度，等待进入可导出状态。")
+      print("[WUI Agent Video] Step 2: polling generation progress until export is available.")
       sys.stdout.flush()
       progress = poll_progress(
           base_url,
@@ -319,17 +319,17 @@ def main() -> int:
           print(f"\nReady for export: thread_id={thread_id}")
           return 0
 
-      print("[WUI Agent Video] 第 3 步：生成已可导出，正在创建 MP4 导出任务。")
+      print("[WUI Agent Video] Step 3: creating MP4 export task.")
       sys.stdout.flush()
       exported = request_json("POST", f"{base_url}/export", args.token, {"thread_id": thread_id})
       print_json("export", exported)
       task_id = extract_task_id(exported)
       if not task_id:
           raise ApiError("Could not find task_id in /export response")
-      print(f"[WUI Agent Video] 导出任务已创建，task_id={task_id}。")
+      print(f"[WUI Agent Video] Export task created, task_id={task_id}.")
       sys.stdout.flush()
 
-      print("[WUI Agent Video] 第 4 步：开始轮询导出进度，等待 MP4 交付。")
+      print("[WUI Agent Video] Step 4: polling export progress until delivery.")
       sys.stdout.flush()
       export_status = poll_export(
           base_url,
@@ -342,7 +342,7 @@ def main() -> int:
 
       url = extract_url(export_status)
       if extract_status(export_status) == "delivered" and url:
-          print(f"\n[WUI Agent Video] 视频已导出完成：{url}")
+          print(f"\n[WUI Agent Video] Video export delivered: {url}")
           return 0
 
       raise ApiError(f"Export did not deliver a URL. status={extract_status(export_status)}")

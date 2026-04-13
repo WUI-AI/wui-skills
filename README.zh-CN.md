@@ -12,18 +12,18 @@ wui-agent-video
 
 ## 安装
 
-推荐全局安装视频 skill：
+安装视频 skill 到 Cursor：
 
 ```bash
-npx skills add https://github.com/WUI-AI/wui-skills -g --skill wui-agent-video
+npx @wui-ai/wui-skills install wui-agent-video
 ```
 
 ## 更新
 
-当这个仓库有更新时，用同一条命令更新已安装的 skill：
+当仓库更新后，执行同一条命令覆盖本地 skill：
 
 ```bash
-npx skills add https://github.com/WUI-AI/wui-skills -g --skill wui-agent-video
+npx @wui-ai/wui-skills install wui-agent-video
 ```
 
 ## 使用
