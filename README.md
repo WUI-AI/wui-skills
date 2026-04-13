@@ -25,7 +25,7 @@ Use it when the user asks an agent to create, plan, script, storyboard, edit, ex
 Install the video skill to Cursor:
 
 ```bash
-npx @wui-ai/wui-skills install wui-agent-video
+npx @wui_ai/wui-skills install wui-agent-video
 ```
 
 ## Update
@@ -33,7 +33,7 @@ npx @wui-ai/wui-skills install wui-agent-video
 Run the same install command again to overwrite the local copy:
 
 ```bash
-npx @wui-ai/wui-skills install wui-agent-video
+npx @wui_ai/wui-skills install wui-agent-video
 ```
 
 ## Use

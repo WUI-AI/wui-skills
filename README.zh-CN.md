@@ -15,7 +15,7 @@ wui-agent-video
 安装视频 skill 到 Cursor：
 
 ```bash
-npx @wui-ai/wui-skills install wui-agent-video
+npx @wui_ai/wui-skills install wui-agent-video
 ```
 
 ## 更新
@@ -23,7 +23,7 @@ npx @wui-ai/wui-skills install wui-agent-video
 当仓库更新后，执行同一条命令覆盖本地 skill：
 
 ```bash
-npx @wui-ai/wui-skills install wui-agent-video
+npx @wui_ai/wui-skills install wui-agent-video
 ```
 
 ## 使用

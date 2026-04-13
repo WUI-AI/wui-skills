@@ -1,15 +1,12 @@
 {
   "name": "@wui_ai/wui-skills",
-  "version": "0.1.1",
-  "description": "WUI.AI skills and installer CLI",
+  "version": "0.1.2",
   "type": "module",
   "bin": {
     "wui-skills": "bin/wui-skills.js"
   },
-  "files": [
-    "bin",
-    "skills",
-    "README.md"
-  ],
-  "license": "MIT"
+  "files": ["bin", "skills", "README.md", "README.zh-CN.md"],
+  "publishConfig": {
+    "access": "public"
+  }
 }

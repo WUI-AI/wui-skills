@@ -14,11 +14,11 @@ const defaultTarget = path.join(os.homedir(), ".cursor", "skills");
 
 function printUsage() {
   console.log(`Usage:
-  npx @wui-ai/wui-skills install <skill-name> [--target <path>]
+  npx @wui_ai/wui-skills install <skill-name> [--target <path>]
 
 Examples:
-  npx @wui-ai/wui-skills install wui-agent-video
-  npx @wui-ai/wui-skills install wui-agent-video --target ~/.cursor/skills`);
+  npx @wui_ai/wui-skills install wui-agent-video
+  npx @wui_ai/wui-skills install wui-agent-video --target ~/.cursor/skills`);
 }
 
 function parseTarget(inputArgs) {
